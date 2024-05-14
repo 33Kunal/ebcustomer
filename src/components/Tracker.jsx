@@ -708,10 +708,13 @@ const Tracker = () => {
         </Link>
       <div className="text-2xl lg:text-3xl  uppercase font-semibold">Project Tracking</div>
         </div>
-   
+        <div className='flex lg:mr-24 md:mr-24 mt-6  gap-x-3 justify-end'>
+        <p className='my-auto text-xl font-semibold'>Final Proposal</p>
+        <button className="rounded-md my-1 bg-blue-800 text-white border-none w-fit px-2 py-1 text-sm mr-2">View</button>
+        </div>
       <div className="flex">
        
-        <div className="flex justify-center w-screen mx-auto mt-20">
+        <div className="flex justify-center w-screen mx-auto mt-10">
           <div>
             <div className="w-full">
               <div className="flex">

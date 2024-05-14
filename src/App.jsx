@@ -4,6 +4,7 @@ import AllProjects from './components/Allprojects';  // Ensure the file name mat
 import Projecttracting from './components/Projecttracting';  // Ensure the file name matches
 import Leadform from './components/LeadForm';
 import Tracker from './components/Tracker';
+import Newlead from './components/newlead';
 
 
 function App() {
@@ -16,6 +17,8 @@ function App() {
             <Route path="/project-tracking" element={<Projecttracting />} />
             <Route path="/form" element={<Leadform/>} />
             <Route path="/project-tracker" element={<Tracker/>} />
+            <Route path="/new-project" element={<Newlead/>} />
+
 
 
      

@@ -8,16 +8,70 @@ import { useParams } from "react-router-dom";
 import { Divider } from "@mui/material";
 
 const LeadForm = () => {
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
   const { leadId } = useParams();
   const [bigImage, setBigImage] = useState(null);
   const [lead, setLead] = useState(null);
   const [activeSection, setActiveSection] = useState([]);
   const [error, setError] = useState(null);
 
-  const images = [
-    "https://via.placeholder.com/200",
-    "https://via.placeholder.com/200",
-  ];
+  const handleRemoveItem = async (indexToRemove) => {
+    const accessToken = localStorage.getItem("Authorization");
+    const response = await deleteFromStorage(
+      uploadedFiles[indexToRemove],
+      accessToken
+    );
+    console.log(response);
+
+    const newUploadedFiles = uploadedFiles.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    setUploadedFiles(newUploadedFiles);
+  };
+
+  const handleSubmit = async () => {
+    await updateRequirements();
+    localStorage.removeItem("uploadedFiles");
+    setUploadedFiles(null);
+    try {
+      // Simulated saving logic (this could be an API call, for example)
+      // If successful:
+      toast.success("Changes saved", {
+        position: "top-center",
+        autoClose: 5000, // Toast will close after 5 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } catch (e) {
+      setError("Failed to save changes");
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFiles = event.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      const file = droppedFiles[0];
+      handleUpload(file);
+    }
+  };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      handleUpload(file, requirementForm.projectNo);
+    }
+  };
 
   const requirements = [
     { label: "Type Of Installation", value: "typeOfInstallation" },
@@ -262,37 +316,77 @@ const LeadForm = () => {
             <Divider />
           </>
         )}
-        <div className="flex justify-between mt-2  w-full">
-          <div className="mt-5">
-            <p className=" text-gray-500 font-bold text-md">Attachments</p>
-            <div className="container mx-auto p-4">
-              <div className="grid grid-cols-2 gap-4 w-32">
-                {images.map((imageUrl, index) => (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    alt={`View ${index + 1}`}
-                    className="cursor-pointer"
-                    onClick={() => handleImageClick(imageUrl)}
-                  />
-                ))}
-              </div>
-              {bigImage && (
-                <div
-                  onClick={handleOverlayClick}
-                  className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex justify-center items-center"
-                >
-                  <img
-                    src={bigImage}
-                    alt="Zoomed view"
-                    className="max-w-full max-h-full"
-                    onClick={handleClose}
-                  />
+              <div>
+              <div className="mt-10 w-full flex justify-center mb-6 ">
+                <div className="border-2 border-black m-4 p-4">
+                  <div className="text-2xl m-4">
+                    Attach electricity bill and other site details
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="border-2 border-dashed rounded-lg bg-gray-100 border-gray-400 p-10 text-center flex flex-col items-center w-4/5"
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                    >
+                      <p className="text-lg">
+                        {uploading ? "Uploading..." : "Drag and drop file here"}
+                      </p>
+
+                      <input
+                        id="fileInput"
+                        type="file"
+                        onChange={handleFileChange}
+                        multiple
+                        className="hidden"
+                      />
+                      {!uploading && (
+                        <button
+                          onClick={() =>
+                            document.getElementById("fileInput").click()
+                          }
+                          className="bg-slate-400 text-white rounded-lg p-1"
+                        >
+                          Upload
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
+              </div>
+              <div className="w-3/5 mx-auto">
+                {uploadedFiles &&
+                  uploadedFiles.length > 0 &&
+                  uploadedFiles.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
+                      <p>
+                        {index + 1}.{" "}
+                        {item.length > 50 ? `${item.slice(0, 50)}...` : item}
+                      </p>
+                      <img
+                        src="/close-nobox.png"
+                        alt="Remove"
+                        className="cursor-pointer w-5"
+                        onClick={() => handleRemoveItem(index)}
+                      />
+                    </div>
+                  ))}
+              </div>
+              <div>
+                <button
+                  onClick={handleSubmit}
+                  className="ml-5 bg-green-500 text-white py-2 px-4 w-fit h-10 rounded-lg mt-5"
+                >
+                  Save Changes
+                </button>
+                {error && <p className="text-red-500">{error}</p>}
+                {/* Toast Container to display toasts */}
+              </div>
             </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );

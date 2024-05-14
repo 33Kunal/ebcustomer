@@ -21,14 +21,8 @@ const Card = () => {
                 <p className="text-gray-700 text-base">
                     Wind Turbine
                 </p>
-
                 </div>
-
                 </div>
-
-
-               
-
             <div>
                 <div className="font-bold text-xl mt-4 mb-2">Status</div>
                 <p className="text-gray-700 text-base">
